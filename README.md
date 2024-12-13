@@ -1,74 +1,157 @@
-[![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/dnW0dm4q)
-# Projet "Dice" - Gestion de lancés de dés avec Spring Boot
+
+# Application de Lancer de Dés - Spring Boot
 
 ## Description
-Le projet "Dice" est une application construite avec Spring Boot permettant de simuler des lancés de dés et de gérer un historique des résultats en base de données. Ce projet met en œuvre les concepts fondamentaux de Spring Boot, notamment l'injection de dépendances, les services RESTful, les entités JPA et les repositories.
 
+Cette application permet de simuler des lancers de dés et d'enregistrer l'historique des lancers dans une base de données. Elle expose des API REST pour effectuer les lancers et consulter l'historique.
 
-## Étapes de réalisation
+## Fonctionnalités
 
-### 1. Création du projet Spring Boot
-- Utilisez [Spring Initializr](https://start.spring.io/) pour créer le projet.
-- Choisissez la dernière version de Spring Boot disponible (LTS).
-- Optez pour **Maven** ou **Gradle** comme outil de gestion de dépendances.
-- Ajoutez les dépendances nécessaires : **Spring Web**, **Spring Data JPA**, **H2 Database** .
+1. **Lancer un dé (1 seul)**  
+   L'utilisateur peut lancer un seul dé et obtenir le résultat (un nombre entre 1 et 6).
 
-### 2. Configuration du projet
-- Configurez l'application pour qu'elle utilise le port **8081**.
-- Donnez un nom (**dice**) au projet dans le fichier de configuration :
-  - Utilisez **`application.properties`** ou **`application.yml`** selon votre préférence.
+2. **Lancer plusieurs dés (X dés)**  
+   L'utilisateur peut lancer un nombre spécifique de dés et obtenir les résultats sous forme de liste.
 
-### 3. Création de la classe `Dice`
-- Implémentez une classe représentant un dé avec les méthodes nécessaires pour effectuer un lancé.
-- Marquez cette classe avec l'annotation `@Component` pour pouvoir l'injecter au besoin.
+3. **Historique des lancers de dés**  
+   L'application enregistre chaque lancer dans la base de données avec les informations suivantes :
+  - Le nombre de dés lancés
+  - Les résultats des dés
+  - Le timestamp du lancer
 
-### 4. Création de l'entité `DiceRollLog`
-- Modélisez une entité JPA `DiceRollLog` comprenant les champs suivants :
-  - **`id`** : Identifiant unique.
-  - **`diceCount`** : Nombre de dés lancés.
-  - **`results`** : Liste ou chaîne des valeurs obtenues. Il existe de nombreuses façons de stocker des valeurs simples (simple String), certaines sont plus élégantes (@ElementCollection) que d'autres, vous pouvez choisir la solution qui vous conviendra.
-  - **`timestamp`** : Horodatage du lancé.
-- Utilisez des annotations JPA comme `@Entity`, `@Id`, `@GeneratedValue`, etc.
+4. **Affichage de l'historique des lancers**  
+   Une API permet de consulter l'historique des lancers de dés effectués.
 
-### 5. Création du `Repository`
-- Implémentez une interface héritant de `JpaRepository<DiceRollLog, Long>` pour gérer les interactions avec la base de données.
+## Prérequis
 
-### 6. Création du contrôleur REST pour lancer les dés
-- Implémentez un contrôleur REST annoté avec `@RestController`.
-- Ajoutez les endpoints suivants :
-  - **`GET /rollDice`** : Lancer un seul dé.
-  - **`GET /rollDices/{X}`** : Lancer X dés (X étant un paramètre dynamique).
+- **Java 11 ou supérieur**
+- **Maven** ou **Gradle** (pour la gestion des dépendances)
+- **Base de données** (H2 en mémoire est utilisé par défaut pour les tests)
 
-### 7. Création du `Service`
-- Créez un service marqué avec `@Service` contenant une méthode :
-  - Prend en paramètre le nombre de dés à lancer.
-  - Retourne les résultats des lancés au contrôleur.
-  - Enregistre l’historique des lancés dans la base via le `Repository`.
+## Installation
 
-### 8. Contrôleur pour afficher les historiques
-- Ajoutez un autre contrôleur REST permettant d'afficher l'historique des lancés :
-  - **`GET /diceLogs`** : Retourne tous les enregistrements de `DiceRollLog` au format JSON.
+1. **Cloner le dépôt**
 
-### 9. Tests et validation
-- Démarrez l'application et testez les endpoints.
-- Vérifiez les résultats dans la base de données et les réponses JSON.
+   Clonez le projet sur votre machine locale :
 
-### 10. (Bonus) Ajout de fonctionnalités avancées
-- **Swagger** :
-  - Ajoutez la dépendance Swagger/OpenAPI.
-  - Configurez Swagger pour documenter vos endpoints.
-  - Accédez à la documentation sur **`http://localhost:8081/swagger-ui.html`**.
-- **Lombok** :
-  - Utilisez Lombok pour simplifier les getters, setters et constructeurs de vos entités.
+   ```bash
+   git clone https://votre-repository.git
+   ```
 
----
+2. **Installer les dépendances**
 
-## Livrables
-- Le code complet du projet, accessible via un dépôt GitHub.
-- Un fichier `README.md` décrivant les étapes réalisées
+   Si vous utilisez Maven :
+   ```bash
+   mvn clean install
+   ```
 
-## Technologies
-- **Framework principal** : Spring Boot
-- **Base de données** : H2 
-- **Documentation API** : Swagger (bonus)
-- **Simplification de code** : Lombok (bonus)
+   Si vous utilisez Gradle :
+   ```bash
+   gradle build
+   ```
+
+3. **Configurer la base de données (optionnel)**
+
+   Le projet utilise H2 en mémoire par défaut pour les tests. Si vous souhaitez utiliser une autre base de données, vous devez configurer les paramètres dans le fichier `application.properties` :
+
+   ```properties
+   spring.datasource.url=jdbc:h2:mem:testdb
+   spring.datasource.driverClassName=org.h2.Driver
+   spring.datasource.username=sa
+   spring.datasource.password=password
+   spring.jpa.database-platform=org.hibernate.dialect.H2Dialect
+   ```
+
+   Pour une base de données MySQL ou PostgreSQL, modifiez les configurations en conséquence.
+
+4. **Démarrer l'application**
+
+   Vous pouvez démarrer l'application en exécutant la classe `DiceApplication` qui contient le point d'entrée principal :
+
+   ```bash
+   mvn spring-boot:run
+   ```
+
+   Ou en utilisant Gradle :
+
+   ```bash
+   gradle bootRun
+   ```
+
+   L'application sera lancée sur le port `8081`.
+
+## Endpoints API
+
+Voici les endpoints exposés par l'application :
+
+### 1. **Lancer un seul dé**
+- **URL** : `/dice/rollDice`
+- **Méthode HTTP** : `GET`
+- **Réponse** : Une liste contenant un seul nombre entre 1 et 6, représentant le résultat du dé lancé.
+
+Exemple de réponse :
+   ```json
+   [4]
+   ```
+
+### 2. **Lancer plusieurs dés**
+- **URL** : `/dice/rollDices/{count}`
+- **Méthode HTTP** : `GET`
+- **Paramètres** : `count` (nombre de dés à lancer)
+- **Réponse** : Une liste des résultats des dés lancés.
+
+Exemple de réponse (lorsque `count=3`) :
+   ```json
+   [4, 2, 6]
+   ```
+
+### 3. **Consulter l'historique des lancers**
+- **URL** : `/diceLogs`
+- **Méthode HTTP** : `GET`
+- **Réponse** : Une liste des historiques de lancers de dés.
+
+Exemple de réponse :
+   ```json
+   [
+     {
+       "id": 1,
+       "diceCount": 3,
+       "results": [4, 2, 6],
+       "timestamp": "2024-12-13T12:34:56"
+     },
+     {
+       "id": 2,
+       "diceCount": 1,
+       "results": [5],
+       "timestamp": "2024-12-13T12:35:12"
+     }
+   ]
+   ```
+
+## Tests
+
+Les tests unitaires et d'intégration sont inclus dans le projet. Pour les exécuter, vous pouvez utiliser les commandes suivantes :
+
+- **Maven** :
+  ```bash
+  mvn test
+  ```
+
+- **Gradle** :
+  ```bash
+  gradle test
+  ```
+
+Ces tests vérifient que l'application fonctionne comme prévu, que les lancers de dés sont effectués correctement et que l'historique est bien enregistré dans la base de données.
+
+## Contribuer
+
+1. Forkez ce projet
+2. Créez une branche (`git checkout -b feature/nom-de-votre-branche`)
+3. Commitez vos modifications (`git commit -am 'Ajoute une nouvelle fonctionnalité'`)
+4. Poussez vers votre branche (`git push origin feature/nom-de-votre-branche`)
+5. Créez une nouvelle Pull Request
+
+## License
+
+Ce projet est sous licence MIT. Voir le fichier [LICENSE](LICENSE) pour plus de détails.
